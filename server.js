@@ -4,31 +4,33 @@ const app = express();
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 
-const database = [
-    {
-        id: '123',
-        name: 'Isai',
-        email: 'isai@gmail.com',
-        password: 'cookies',
-        entries: 0,
-        joined: new Date()
-    },
-    {
-        id: '124',
-        name: 'Ale',
-        email: 'ale@gmail.com',
-        password: 'bananas',
-        entries: 0,
-        joined: new Date()
-    },
-]
+const database = {
+    users: [
+        {
+            id: '123',
+            name: 'Isai',
+            email: 'isai@gmail.com',
+            password: 'cookies',
+            entries: 0,
+            joined: new Date()
+        },
+        {
+            id: '124',
+            name: 'Ale',
+            email: 'ale@gmail.com',
+            password: 'bananas',
+            entries: 0,
+            joined: new Date()
+        },
+    ]
+}
 
 app.listen(3000, () => {
     console.log('App is running on PORT 3000')
 })
 
 app.get('/', (req, res) => {
-    res.json('This server is working');
+    res.json(database.users);
 })
 
 app.post('/signin', (req, res) => {
@@ -38,6 +40,19 @@ app.post('/signin', (req, res) => {
         } else {
             res.status(400).json('Error logging in');
         }       
+})
+
+app.post('/register', (req, res) => {
+    const { name, email, password } = req.body;
+    database.users.push({
+        id: '125',
+        name: name,
+        email: email,
+        password: password,
+        entries: 0,
+        joined: new Date()
+    })
+    res.json(database.users[database.users.length -1]);
 })
 
 /*
