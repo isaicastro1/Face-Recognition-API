@@ -29,15 +29,17 @@ app.get('/', (req, res) => {
     res.json(database.users);
 })
 
+// authenticating user logging in
 app.post('/signin', (req, res) => {
     const { email, password } = req.body;
-    if (email === database.users[0].email && 
-        req.body.password === database.users[0].password) {
-            res.json('Success');
-        } else {
-            res.status(400).json('Error logging in');
-        }       
-})
+    for (let i = 0; i < database.users.length + 1; i++) {
+        if (email === database.users[i].email && 
+            password === database.users[i].password) {
+                return res.json('Success');
+            }       
+        }
+        return res.status(400).json('Error logging in');
+    })
 
 app.post('/register', (req, res) => {
     const { name, email, password } = req.body;
