@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 // authenticating user logging in
 app.post('/signin', (req, res) => {
     const { email, password } = req.body;
-    for (let i = 0; i < database.users.length + 1; i++) {
+    for (let i = 0; i < database.users.length; i++) {
         if (email === database.users[i].email && 
             password === database.users[i].password) {
                 return res.json('Success');
