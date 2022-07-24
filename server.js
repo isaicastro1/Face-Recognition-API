@@ -1,4 +1,5 @@
 import express from 'express';
+import bcrypt from 'bcrypt-nodejs';
 
 const app = express();
 app.use(express.urlencoded({extended: false}));
@@ -10,7 +11,7 @@ const database = {
             id: '123',
             name: 'Isai',
             email: 'isai@gmail.com',
-            password: 'cookies',
+            // password: 'cookies',
             entries: 0,
             joined: new Date()
         },
@@ -18,10 +19,17 @@ const database = {
             id: '124',
             name: 'Ale',
             email: 'ale@gmail.com',
-            password: 'bananas',
+            // password: 'bananas',
             entries: 0,
             joined: new Date()
         },
+    ],
+    login: [
+        {
+            id: '',
+            email: '',
+            hash: '',
+        }
     ]
 }
 
@@ -32,6 +40,17 @@ app.get('/', (req, res) => {
 // authenticating user logging in
 app.post('/signin', (req, res) => {
     const { email, password } = req.body;
+    bcrypt.hash(password, null, null, function(err, hash) {
+        console.log(hash);
+    });
+    
+    // Load hash from your password DB.
+    bcrypt.compare("jet", '$2a$10$TKLA8DIwF5G66KazYK4aZ.F9St1QeNjdCc8jZ89r.fD6TxZj3Q5I2', function(err, res) {
+        console.log('First', res);
+    });
+    bcrypt.compare("veggies", '$2a$10$TKLA8DIwF5G66KazYK4aZ.F9St1QeNjdCc8jZ89r.fD6TxZj3Q5I2', function(err, res) {
+        console.log('Second', res);
+    });
     for (let i = 0; i < database.users.length; i++) {
         if (email === database.users[i].email && 
             password === database.users[i].password) {
@@ -43,6 +62,9 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { name, email, password } = req.body;
+    bcrypt.hash(password, null, null, function(err, hash) {
+        console.log(hash);
+    });
     database.users.push({
         id: '125',
         name: name,
