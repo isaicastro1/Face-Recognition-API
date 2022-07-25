@@ -13,7 +13,7 @@ const database = {
             id: '123',
             name: 'Isai',
             email: 'isai@gmail.com',
-            password: 'cookies',
+            password: '$2a$10$AgGjjhWRhFfqgiOT4tnxGedMa1oGx55eLfUa5dtNQG46mSv/QyJBa',
             entries: 0,
             joined: new Date()
         },
@@ -21,7 +21,7 @@ const database = {
             id: '124',
             name: 'Ale',
             email: 'ale@gmail.com',
-            password: 'bananas',
+            password: '$2a$10$.t/ua3SPZtBQMI9vbf8SnOQK6hqwphGlUmxTMIpvUVUPvCveQ98f.',
             entries: 0,
             joined: new Date()
         },
@@ -42,31 +42,56 @@ app.get('/', (req, res) => {
 // authenticating user logging in
 app.post('/signin', (req, res) => {
     const { email, password } = req.body;
+
     bcrypt.hash(password, null, null, function(err, hash) {
-        // console.log(hash);
-    });
-    
-    // Load hash from your password DB.
-    bcrypt.compare("jet", '$2a$10$TKLA8DIwF5G66KazYK4aZ.F9St1QeNjdCc8jZ89r.fD6TxZj3Q5I2', function(err, res) {
-        // console.log('First', res);
-    });
-    bcrypt.compare("veggies", '$2a$10$TKLA8DIwF5G66KazYK4aZ.F9St1QeNjdCc8jZ89r.fD6TxZj3Q5I2', function(err, res) {
-        // console.log('Second', res);
-    });
-    for (let i = 0; i < database.users.length; i++) {
-        if (email === database.users[i].email && 
-            password === database.users[i].password) {
-                return res.json('Success');
-            }       
-        }
-        return res.status(400).json('Error logging in');
+        database.users.map(user => {
+            if (user.email === email) {
+                user.password === hash;
+                bcrypt.compare(password, hash, function(err, res) {
+                    if (res === true) {
+                        return res.json('Success');
+                    }
+                })
+            } else {
+                return res.status(400).json('Error logging in');
+            }
+        })
     })
+})
+
+    // Load hash from your password DB.
+    // bcrypt.compare(password, , function(err, res) {
+    //     console.log('First', res);
+    // });
+    
+    // for (let i = 0; i < database.users.length; i++) {
+    //     if (email === database.users[i].email && 
+    //         password === database.users[i].password) {
+    //             return res.json('Success');
+    //         }       
+    //     }
+    //     return res.status(400).json('Error logging in');
+    // })
 
 app.post('/register', (req, res) => {
     const { name, email, password } = req.body;
-    bcrypt.hash(password, null, null, function(err, hash) {
-        console.log(hash);
-    });
+
+    // bcrypt.hash(password, null, null, function(err, hash) {
+    //     if (err) {
+    //         console.log('Oops, there was an error')
+    //     } else {
+    //         database.users.push({
+    //             id: '125',
+    //             name: name,
+    //             email: email,
+    //             entries: 0,
+    //             joined: new Date()
+    //         })
+    //         res.json(database.users[database.users.length -1]);
+    //     }
+    // })
+    // });
+
     database.users.push({
         id: '125',
         name: name,
@@ -92,7 +117,7 @@ app.get('/profile/:id', (req, res) => {
     }
 })
 
-app.post('/image', (req, res) => {
+app.put('/image', (req, res) => {
     const { id } = req.body;
     let found = false;
     database.users.forEach(user => {
